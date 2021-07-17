@@ -11,7 +11,18 @@ router.get('/', (req, res) => {
     include: {
       model: Product,
     },
-  });
+    //include: [Product],
+  })
+
+    .then((dbUserData) => {
+      res.json(dbUserData);
+      console.log(dbUserData);
+    })
+
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.get('/:id', (req, res) => {
@@ -24,7 +35,16 @@ router.get('/:id', (req, res) => {
     include: {
       model: Product,
     },
-  });
+  })
+    .then((dbUserData) => {
+      res.json(dbUserData);
+      console.log(dbUserData);
+    })
+
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.post('/', (req, res) => {
@@ -45,7 +65,19 @@ router.put('/:id', (req, res) => {
     where: {
       id: req.params.id,
     },
-  });
+  })
+
+    .then((dbUserData) => {
+      if (!dbUserData[0]) {
+        res.status(404).json({ message: 'No user found with this id' });
+        return;
+      }
+      res.json(dbUserData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 router.delete('/:id', (req, res) => {

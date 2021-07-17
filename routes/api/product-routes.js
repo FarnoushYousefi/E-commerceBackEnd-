@@ -7,16 +7,44 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
-  // Product.findAll({
-  //   attribute: ['id', 'product_name', 'price'],
-  //   include: [],
-  // });
+  Product.findAll({
+    attribute: ['id', 'product_name', 'price'],
+    include: [
+      Category,
+      {
+        model: Tag,
+        through: ProductTag,
+      },
+    ],
+  })
+    .then((dbUserData) => res.json(dbUserData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  Product.findOne({
+    where: {
+      id: req.params.id,
+    },
+    include: [
+      Category,
+      {
+        model: Tag,
+        through: ProductTag,
+      },
+    ],
+  })
+    .then((dbUserData) => res.json(dbUserData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 // create new product
@@ -27,6 +55,9 @@ router.post('/', (req, res) => {
       price: 200.00,
       stock: 3,
       tagIds: [1, 2, 3, 4]
+    }
+    1:{
+
     }
   */
   Product.create(req.body)
@@ -39,6 +70,7 @@ router.post('/', (req, res) => {
             tag_id,
           };
         });
+        //[{productId:5, tagg_id:1}][{productId:5, tagg_id:2}]
         return ProductTag.bulkCreate(productTagIdArr);
       }
       // if no product tags, just respond
