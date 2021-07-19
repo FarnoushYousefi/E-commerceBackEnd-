@@ -70,6 +70,7 @@ router.post('/', (req, res) => {
             tag_id,
           };
         });
+        console.log(productTagIdArr);
         //[{productId:5, tagg_id:1}][{productId:5, tagg_id:2}]
         return ProductTag.bulkCreate(productTagIdArr);
       }
@@ -127,6 +128,22 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
+  Product.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((dbUserData) => {
+      if (!dbUserData) {
+        res.status(404).json({ message: 'No Category found with this id' });
+        return;
+      }
+      res.json(dbUserData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
